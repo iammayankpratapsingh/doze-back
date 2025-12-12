@@ -1,0 +1,73 @@
+// Connect to your database and run this script in mongosh
+
+const deviceIds = [
+  "0102-91A41AE10E9E",
+  "0102-6D6A2A76996F",
+  "0102-DEC458F0E2EA",
+  "0102-41ACE44DC2D5",
+  "0102-78FF7B0E5C20",
+  "0102-C878636B1973",
+  "0102-3DF98F4AA2ED",
+  "0102-41AC7EC4DB7C",
+  "0102-63CB123376BF",
+  "0102-05FD03F1D37A",
+  "0102-8135860A21CD",
+  "0102-544A8F29E703",
+  "0102-86530C62770B",
+  "0102-C8E194503609",
+  "0102-69350884EFE4",
+  "0102-B03EB39331AB",
+  "0102-A5F08E4C521A",
+  "0102-985CFC083C95",
+  "0102-D5F9E97150C0",
+  "0102-D0C71A567964",
+  "0102-57AC7C796811",
+  "0102-45BE5566047E",
+  "0102-6D9A2C7921F6",
+  "0102-800307E7184B",
+  "0102-FED406ED28AC",
+  "0102-AF399597F2D4",
+  "0102-FC1F506E27C9",
+  "0102-882C36E23AB5",
+  "0102-3D285189BD6D",
+  "0102-83F921A04E46",
+  "0102-E0DBD4A10AC6",
+  "0102-E52B5E26D9B0",
+  "0102-D786D7F48C71",
+  "0102-FEC2312CC49C",
+  "0102-88CEE647AB93",
+  "0102-593A5837C0D8",
+  "0102-051C69A26C4A",
+  "0102-0AE9465E3146",
+  "0102-4C1B80B86B7F",
+  "0102-33D64D61D65C",
+  "0102-03DF4CEF16AF",
+  "0102-2958D24C2F47",
+  "0102-0DDEEA0546D5",
+  "0102-D3E0C9350CA0",
+  "0102-95F34BA9CCB7",
+  "0102-77DF3BB2CC13",
+  "0102-F9D3CB085C5B",
+  "0102-527D1047BB15",
+  "0102-B10765DCC303"
+];
+
+const now = new Date();
+
+const docs = deviceIds.map(d => ({
+  deviceId: d,
+  deviceType: "01",
+  manufacturer: "02",
+  accountId: null,           // keep same as example
+  profileId: null,  // keep same
+  firmwareVersion: "1.2.3",
+  location: "NOIDA",
+  status: "inactive",
+  lastActiveAt: now,
+  createdAt: now,
+  validity: now,
+  userId: null,                 // set null
+  profileVersion: 1
+}));
+
+db.devices.insertMany(docs);

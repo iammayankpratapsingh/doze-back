@@ -1,0 +1,67 @@
+use("iot-health-db");
+
+const deviceId = "0102-ACDE48112233";
+const FROM = ISODate("2025-10-01T00:00:00Z");
+const TO = ISODate("2025-10-06T23:59:59Z");
+
+print("📊 Device:", deviceId);
+print("📅 Range:", FROM.toISOString(), "→", TO.toISOString());
+
+// 1️⃣ Count total records
+const total = db.healthdatas.countDocuments({ deviceId });
+const presenceOnly = db.healthdatas.countDocuments({ deviceId, "signals.presence": 1 });
+const hrOnly = db.healthdatas.countDocuments({ deviceId, heartRate: { $gt: 0 } });
+const validBoth = db.healthdatas.countDocuments({
+  deviceId,
+  "signals.presence": 1,
+  heartRate: { $gt: 0 },
+});
+
+print("\n--- Record Quality ---");
+print(`Total: ${total}`);
+print(`Presence=1: ${presenceOnly}`);
+print(`HeartRate>0: ${hrOnly}`);
+print(`Presence=1 & HR>0: ${validBoth}`);
+
+// 2️⃣ Find time coverage
+const coverage = db.healthdatas.aggregate([
+  { $match: { deviceId } },
+  {
+    $group: {
+      _id: null,
+      first: { $min: "$timestamp" },
+      last: { $max: "$timestamp" },
+    },
+  },
+]).toArray()[0];
+
+print("\n--- Time Coverage ---");
+printjson(coverage);
+
+// 3️⃣ Aggregate summary for selected window
+const agg = db.healthdatas.aggregate([
+  {
+    $match: {
+      deviceId,
+      timestamp: { $gte: FROM, $lte: TO },
+      heartRate: { $gt: 0 },
+      "signals.presence": 1,
+    },
+  },
+  {
+    $group: {
+      _id: null,
+      count: { $sum: 1 },
+      minHR: { $min: "$heartRate" },
+      avgHR: { $avg: "$heartRate" },
+      maxHR: { $max: "$heartRate" },
+    },
+  },
+]).toArray()[0];
+
+print("\n--- Filtered HR Summary (Presence=1, HR>0) ---");
+printjson(agg);
+
+print("\n✅ Manual aggregation complete. Now test backend with same parameters:\n");
+print(`curl -X GET "https://admin.dozemate.com/api/devices/history?deviceId=${deviceId}&from=${FROM.toISOString()}&to=${TO.toISOString()}&limit=500" \\`);
+print('  -H "Authorization: Bearer <your_token>"');

@@ -1,0 +1,45 @@
+
+// Select target database
+use("iot-health-db")
+
+const deviceId = "0102-ACDE48112233"; // target device
+// Start from IST 17:33 (convert to UTC for Mongo)
+const istStart = new Date("2025-10-08T12:03:00Z"); // 17:33 IST
+const docs = [];
+
+// Generate 20 test records (2-min intervals)
+for (let i = 0; i < 20; i++) {
+  const ts = new Date(istStart.getTime() + i * 2 * 60 * 1000);
+
+  docs.push({
+    deviceId,
+    timestamp: ts,
+    temp: 27.5 + Math.random() * 2,
+    humidity: 50 + Math.random() * 10,
+    iaq: 65 + Math.random() * 10,
+    eco2: 700 + Math.random() * 50,
+    tvoc: 160 + Math.random() * 20,
+    etoh: 0.05 + Math.random() * 0.02,
+    hrv: 120 + Math.random() * 20,
+    stress: Math.floor(Math.random() * 10),
+    respiration: 12 + Math.random() * 3,
+    heartRate: 70 + Math.random() * 10,
+    pressure: 960 + Math.random() * 10,
+    bvoc: 120 + Math.random() * 20,
+    gasPerceor: 1 + Math.random() * 4,   // ✅ matches frontend spelling
+    metrics: {
+      sdnn: 35 + Math.random() * 20,
+      rmssd: 30 + Math.random() * 15,
+      lf_hf_ratio: 0.8 + Math.random() * 1.2,
+    },
+    signals: {
+      motion: Math.random() > 0.5 ? 1 : 0,
+      presence: 1,
+      battery: 80 + Math.random() * 15,
+    },
+  });
+}
+
+db.healthdatas.insertMany(docs);
+
+print(`✅ Inserted ${docs.length} test records for device ${deviceId} starting from ${istStart.toISOString()}`);

@@ -1,0 +1,21 @@
+
+
+PS D:\Doze_web>PS D:\Doze_web>
+
+mongoexport --host=172.105.98.123 --port=27017 --username=mqtt_user --password="4by]HGl_bamF.)@&,_SnvCuTX(oco" --db=iot-health-db --collection=healthdatas --type=csv --fields=deviceId,timestamp,temp,humidity,iaq,eco2,tvoc,etoh,hrv,stress,respiration,heartRate --limit=1 --out="D:\healthdata.csv"
+
+
+0 average Filter 
+
+(Invoke-WebRequest `
+  -Uri "http://localhost:5000/api/devices/history?deviceId=0102-ACDE48112233&from=2025-10-08T08:00:00Z&to=2025-10-08T08:30:00Z&limit=500" `
+  -Headers @{ "Authorization" = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGM5NjBlZDUyOTNlYThiMjE2MjhmYmMiLCJyb2xlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc1OTkwNzQ2MywiZXhwIjoxNzYyNDk5NDYzfQ._yXQX0Urje4ak8fG2jIbJUEbDxX1k7oJTXwAxacQVXg" } `
+  -Method GET
+).Content
+
+  
+Invoke-WebRequest `
+  -Uri "http://localhost:5000/api/devices/history?deviceId=0102-ACDE48112233&limit=5" `
+  -Headers @{ "Authorization" = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGM5NjBlZDUyOTNlYThiMjE2MjhmYmMiLCJyb2xlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc1OTkwNzQ2MywiZXhwIjoxNzYyNDk5NDYzfQ._yXQX0Urje4ak8fG2jIbJUEbDxX1k7oJTXwAxacQVXg" } `
+  -Method GET |
+  ConvertFrom-Json
